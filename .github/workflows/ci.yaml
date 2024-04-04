@@ -19,3 +19,4 @@ jobs:
       uses: gradle/actions/setup-gradle@v3
       with:
         arguments: build
+        build-root-directory: ./task1
