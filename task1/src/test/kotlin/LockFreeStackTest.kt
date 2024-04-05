@@ -17,6 +17,24 @@ class LockFreeStackTest {
     fun peek() = lockFreeStack.peek()
 
     @Test
+    fun pushTest() {
+        lockFreeStack.push(2)
+        assert (lockFreeStack.top.get()?.value == 2)
+    }
+
+    @Test
+    fun popTest() {
+        lockFreeStack.push(3)
+        assert (lockFreeStack.pop() == 3)
+    }
+
+    @Test
+    fun peekTest() {
+        lockFreeStack.push(5)
+        assert (lockFreeStack.peek() == 5)
+    }
+
+    @Test
     fun modelTest() =
         ModelCheckingOptions()
             .threads(3)

@@ -2,10 +2,10 @@ import java.util.concurrent.TimeoutException
 
 class EliminationBackoffStack<T> : LockFreeStack<T>() {
     companion object {
-        private const val capacity = 100
+        private const val SIZE = 100
     }
 
-    private val eliminationArray = EliminationArray<T>(capacity)
+    private val eliminationArray = EliminationArray<T>(SIZE)
 
     private val policy = ThreadLocal.withInitial { RangePolicy() }
 

@@ -3,12 +3,13 @@ package benchmark
 import EliminationBackoffStack
 import LockFreeStack
 import kotlinx.benchmark.*
+import org.openjdk.jmh.annotations.Threads
 import kotlin.random.Random
 
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(BenchmarkTimeUnit.MILLISECONDS)
 @Warmup(iterations = 5, time = 500, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
-@Measurement(iterations = 5, time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
+@Measurement(iterations = 30, time = 2, timeUnit = BenchmarkTimeUnit.SECONDS)
 @State(Scope.Benchmark)
 class LockFreeBenchmark {
     private lateinit var stack: LockFreeStack<Int>
@@ -41,4 +42,5 @@ class LockFreeBenchmark {
             eliminationBackoffStack.pop()
         }
     }
+
 }
