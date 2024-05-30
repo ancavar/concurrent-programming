@@ -2,6 +2,8 @@ name: Build & test with Gradle
 
 on:
   push:
+    paths:
+      - 'task1/**'
 
 jobs:
   build-and-test:
