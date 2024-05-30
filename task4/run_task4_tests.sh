@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPEAT_COUNT=3
+REPEAT_COUNT=10
 
 for i in $(seq 1 $REPEAT_COUNT)
 do
