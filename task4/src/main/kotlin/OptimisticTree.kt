@@ -1,10 +1,7 @@
 package org.example
 
-import kotlinx.coroutines.sync.Mutex
-
 class OptimisticTree<K : Comparable<K>, V>: Tree<K, V>() {
     private var root: TreeNode<K, V>? = null
-    private val treeLock = Mutex()
 
     private suspend fun searchAux(key: K): Pair<TreeNode<K, V>?, TreeNode<K, V>?> {
         while (true) {
@@ -28,15 +25,15 @@ class OptimisticTree<K : Comparable<K>, V>: Tree<K, V>() {
 
             var validationParent: TreeNode<K, V>? = root
             while (parent != validationParent) {
-                val key = checkNotNull(validationParent?.key)
-                validationParent = if (key < parent.key) validationParent?.right else validationParent?.left
-//                if (validationParent == null) {
-//                    // again
-//                    validationParent = root
-//                }
+                val validationParentKey = checkNotNull(validationParent?.key)
+                validationParent = if (validationParentKey < parent.key) validationParent?.right else validationParent?.left
+                if (validationParent == null) {
+                    // again
+                    break
+                }
             }
 
-            if (current == validationParent.left || current == validationParent.right) {
+            if (current == validationParent?.left || current == validationParent?.right) {
                 return current to parent
             } else {
                 // retry
@@ -90,7 +87,7 @@ class OptimisticTree<K : Comparable<K>, V>: Tree<K, V>() {
     private suspend fun deleteRec(node: TreeNode<K, V>?, parent: TreeNode<K, V>?): TreeNode<K, V>? {
         when {
             node == null -> {
-                parent?.unlock() ?: treeLock.unlock()
+                parent?.unlock()
                 return parent
             }
 
@@ -108,7 +105,7 @@ class OptimisticTree<K : Comparable<K>, V>: Tree<K, V>() {
                     }
                 }
                 node.unlock()
-                parent?.unlock() ?: treeLock.unlock()
+                parent?.unlock()
             }
 
             else -> {
@@ -136,7 +133,7 @@ class OptimisticTree<K : Comparable<K>, V>: Tree<K, V>() {
 
                 right.unlock()
                 node.unlock()
-                parent?.unlock() ?: treeLock.unlock()
+                parent?.unlock()
             }
         }
         return parent
