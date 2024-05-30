@@ -1,13 +1,13 @@
 package org.example
 
-import kotlinx.atomicfu.locks.reentrantLock
-import kotlinx.atomicfu.locks.withLock
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
-class CoarseGrainedTree<K : Comparable<K>, V>: Tree<K, V> {
+class CoarseGrainedTree<K : Comparable<K>, V>: Tree<K, V>() {
     private var root: TreeNode<K, V>? = null
-    private val lock = reentrantLock()
+    private val lock = Mutex()
 
-    override fun insert(key: K, value: V) {
+    override suspend fun insert(key: K, value: V) {
         lock.withLock {
             root = insertRec(root, key, value)
         }
@@ -27,7 +27,7 @@ class CoarseGrainedTree<K : Comparable<K>, V>: Tree<K, V> {
         return node
     }
 
-    override fun search(key: K): V? {
+    override suspend fun search(key: K): V? {
         lock.withLock {
             return searchRec(root, key)
         }
@@ -44,7 +44,7 @@ class CoarseGrainedTree<K : Comparable<K>, V>: Tree<K, V> {
         }
     }
 
-    override fun delete(key: K) {
+    override suspend fun delete(key: K) {
         lock.withLock {
             root = deleteRec(root, key)
         }
@@ -75,18 +75,5 @@ class CoarseGrainedTree<K : Comparable<K>, V>: Tree<K, V> {
             current = current.left!!
         }
         return current
-    }
-
-    override fun getKeys(): List<K> {
-        val keys = mutableListOf<K>()
-        inOrderTraversal(root, keys)
-        return keys
-    }
-
-    private fun inOrderTraversal(node: TreeNode<K, V>?, keys: MutableList<K>) {
-        node ?: return
-        inOrderTraversal(node.left, keys)
-        keys.add(node.key)
-        inOrderTraversal(node.right, keys)
     }
 }
