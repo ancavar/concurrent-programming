@@ -43,12 +43,12 @@ class LockFreeStackTest {
             .iterations(50)
             .invocationsPerIteration(1000)
             .checkObstructionFreedom()
-            .check(this::class.java)
+            .check(this::class)
 
     @Test
     fun stressTest() =
         StressOptions()
-            .threads(3)
+            .threads(6)
             .actorsPerThread(3)
             .actorsAfter(1)
             .iterations(50)
